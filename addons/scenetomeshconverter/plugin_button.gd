@@ -46,6 +46,7 @@ func convert_node_to_meshinstance():
 	# Restoring the transform to maintain data for undo operations.
 	var node_transform = node.global_transform
 	node.transform = Transform3D()
+	remove_hidden_nodes(node)
 	gltf_document.append_from_scene(node, gltf_state)
 	node.global_transform = node_transform
 	
@@ -75,6 +76,14 @@ func convert_node_to_meshinstance():
 	mesh_instance.owner = root
 	mesh_instance.global_transform = node_transform
 	mesh_instance.name = node_name
+
+## Remove hidden nodes to ignore them in the process
+func remove_hidden_nodes(parent):
+	if !parent.visible:
+		parent.free()
+	else:
+		for child in parent.get_children():
+			remove_hidden_nodes(child)
 
 
 ## Function used to set owner of a tree in undo actions, to include into scene again
